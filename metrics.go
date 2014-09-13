@@ -2,7 +2,7 @@ package sql_metrics
 
 import (
 	"fmt"
-	metrics "github.com/yvasiyarov/go-metrics" // max,mean,min,stddev,percentile
+	metrics "github.com/sonots/go-metrics" // max,mean,min,stddev,percentile
 	"time"
 )
 
@@ -33,7 +33,7 @@ func (proxy *Metrics) printMetrics(duration int) {
 		count := timer.Count()
 		if count > 0 {
 			fmt.Printf(
-				"time:%v\tdb:%s\tquery:%s\tcount:%d\tmax:%f\tmean:%f\tmin:%f\tpercentile95:%f\tduration:%d\n",
+				"time:%v\tdb:%s\tquery:%s\tcount:%d\tmax:%f\tmean:%f\tmin:%f\tpercentile95:%f\tsum:%f\tduration:%d\n",
 				time.Now(),
 				proxy.name,
 				query,
@@ -42,6 +42,7 @@ func (proxy *Metrics) printMetrics(duration int) {
 				timer.Mean()/float64(time.Second),
 				float64(timer.Min())/float64(time.Second),
 				timer.Percentile(0.95)/float64(time.Second),
+				float64(timer.Sum())/float64(time.Second),
 				duration,
 			)
 			proxy.timers[query] = metrics.NewTimer()
