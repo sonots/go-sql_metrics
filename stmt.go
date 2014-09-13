@@ -25,41 +25,29 @@ func (proxy *Stmt) measure(startTime time.Time) {
 
 // instrument Exec
 func (proxy *Stmt) Exec(args ...interface{}) (sql.Result, error) {
-	var startTime time.Time
 	if Enable {
-		startTime = time.Now()
-	}
-	result, error := proxy.Original.Exec(args...)
-	if Enable {
+		startTime := time.Now()
 		defer proxy.measure(startTime)
 	}
-	return result, error
+	return proxy.Original.Exec(args...)
 }
 
 // instrument Query
 func (proxy *Stmt) Query(args ...interface{}) (*sql.Rows, error) {
-	var startTime time.Time
 	if Enable {
-		startTime = time.Now()
-	}
-	rows, error := proxy.Original.Query(args...)
-	if Enable {
+		startTime := time.Now()
 		defer proxy.measure(startTime)
 	}
-	return rows, error
+	return proxy.Original.Query(args...)
 }
 
 // instrument QueryRow
 func (proxy *Stmt) QueryRow(args ...interface{}) *sql.Row {
-	var startTime time.Time
 	if Enable {
-		startTime = time.Now()
-	}
-	row := proxy.Original.QueryRow(args...)
-	if Enable {
+		startTime := time.Now()
 		defer proxy.measure(startTime)
 	}
-	return row
+	return proxy.Original.QueryRow(args...)
 }
 
 // just wrap

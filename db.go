@@ -20,41 +20,29 @@ func newDB(name string, db *sql.DB) *DB {
 
 // instrument Exec
 func (proxy *DB) Exec(query string, args ...interface{}) (sql.Result, error) {
-	var startTime time.Time
 	if Enable {
-		startTime = time.Now()
-	}
-	result, error := proxy.Original.Exec(query, args...)
-	if Enable {
+		startTime := time.Now()
 		defer proxy.measure(startTime, query)
 	}
-	return result, error
+	return proxy.Original.Exec(query, args...)
 }
 
 // instrument Query
 func (proxy *DB) Query(query string, args ...interface{}) (*sql.Rows, error) {
-	var startTime time.Time
 	if Enable {
-		startTime = time.Now()
-	}
-	rows, error := proxy.Original.Query(query, args...)
-	if Enable {
+		startTime := time.Now()
 		defer proxy.measure(startTime, query)
 	}
-	return rows, error
+	return proxy.Original.Query(query, args...)
 }
 
 // instrument QueryRow
 func (proxy *DB) QueryRow(query string, args ...interface{}) *sql.Row {
-	var startTime time.Time
 	if Enable {
-		startTime = time.Now()
-	}
-	row := proxy.Original.QueryRow(query, args...)
-	if Enable {
+		startTime := time.Now()
 		defer proxy.measure(startTime, query)
 	}
-	return row
+	return proxy.Original.QueryRow(query, args...)
 }
 
 // forward to Stmt

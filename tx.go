@@ -25,20 +25,17 @@ func (proxy *Tx) measure(startTime time.Time) {
 // instrument Exec
 func (proxy *Tx) Exec(query string, args ...interface{}) (sql.Result, error) {
 	proxy.query = query
-	result, error := proxy.Original.Exec(query, args...)
-	return result, error
+	return proxy.Original.Exec(query, args...)
 }
 
 func (proxy *Tx) Query(query string, args ...interface{}) (*sql.Rows, error) {
 	proxy.query = query
-	rows, error := proxy.Original.Query(query, args...)
-	return rows, error
+	return proxy.Original.Query(query, args...)
 }
 
 func (proxy *Tx) QueryRow(query string, args ...interface{}) *sql.Row {
 	proxy.query = query
-	row := proxy.Original.QueryRow(query, args...)
-	return row
+	return proxy.Original.QueryRow(query, args...)
 }
 
 func (proxy *Tx) Prepare(query string) (*sql.Stmt, error) {
@@ -53,11 +50,8 @@ func (proxy *Tx) Stmt(stmt *sql.Stmt) *sql.Stmt {
 
 // meassure time at commit
 func (proxy *Tx) Commit() error {
-	var startTime time.Time
 	if Enable {
-		startTime = time.Now()
-	}
-	if Enable {
+		startTime := time.Now()
 		defer proxy.measure(startTime)
 	}
 	return proxy.Original.Commit()
