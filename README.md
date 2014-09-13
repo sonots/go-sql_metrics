@@ -11,14 +11,13 @@ import (
 )
 
 func main() {
-  rawDB, _ := sql.Open("sqlite3", "foo.db")
-  db := sql_metrics.WrapDB("foo", rawDB) // wrap *sql.DB by *sql_metrics.DB
+  // db, err := sql.Open("sqlite3", "foo.db")
+  _db, err := sql.Open("sqlite3", "foo.db")
+  db := sql_metrics.WrapDB("foo", _db)
 
-  // instrument Exec
+  // Use as usual
   result, err := db.Exec("INSERT INTO memos (id, body) VALUES (?)", id, body)
-  // instrument Query
   rows, err := db.Query("SELECT body FROM memos WHERE id = ?", id)
-  // instrument QueryRow
   err := db.QueryRow("SELECT body FROM memos WHERE id = ?", id).Scan(&body)
 
   sql_metrics.Verbose = true // print metrics on each query
@@ -30,13 +29,13 @@ func main() {
 Output Example (LTSV format):
 
 ```
-time:2014-09-13 17:35:49.764851359 +0900 JST    db:foo  query:SELECT body FROM memos WHERE id = ?   count:4 max:0.001562    mean:0.000817   min:0.000033    percentile95:0.001562  duration:1
+time:2014-09-13 17:35:49.764851359 +0900 JST    db:foo    query:SELECT body FROM memos WHERE id = ?   count:4 max:0.001562    mean:0.000817   min:0.000033    percentile95:0.001562  duration:1
 ```
 
 Verbose Output Example (LTSV format):
 
 ```
-time:2014-09-13 17:35:49.717393256 +0900 JST    db:foo  query:SELECT body FROM memos WHERE id = ?   elapsed:0.000910
+time:2014-09-13 17:35:49.717393256 +0900 JST    db:foo    query:SELECT body FROM memos WHERE id = ?   elapsed:0.000910
 ```
 
 # ToDo

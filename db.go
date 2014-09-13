@@ -8,14 +8,18 @@ import (
 
 type DB struct {
 	Original *sql.DB
-	*Metrics
+	metrics  *Metrics
 }
 
-func newDB(name string, db *sql.DB) *DB {
+func newDB(db *sql.DB, metrics *Metrics) *DB {
 	return &DB{
 		db,
-		newMetrics(name),
+		metrics,
 	}
+}
+
+func (proxy *DB) measure(startTime time.Time, query string) {
+	proxy.metrics.measure(startTime, query)
 }
 
 // instrument Exec
@@ -59,7 +63,9 @@ func (proxy *DB) Begin() (*Tx, error) {
 	return proxyTx, err
 }
 
+// release proxyRegistry too
 func (proxy *DB) Close() error {
+	proxyRegistry[proxy.Original] = nil
 	return proxy.Original.Close()
 }
 

@@ -12,12 +12,23 @@ var Verbose = false
 var Enable = true
 
 // a set of proxies
-var proxyRegistry = make(map[string](*DB))
+var proxyRegistry = make(map[*sql.DB](*DB))
 
-//Wrap  instrument template
+// a set of metrics
+var metricsRegistry = make(map[string](*Metrics))
+
+//WrapDB
 func WrapDB(name string, db *sql.DB) *DB {
-	proxy := newDB(name, db)
-	proxyRegistry[name] = proxy
+	metrics := metricsRegistry[name]
+	if metrics == nil {
+		metrics = newMetrics(name)
+		metricsRegistry[name] = metrics
+	}
+	proxy := proxyRegistry[db]
+	if proxy == nil {
+		proxy = newDB(db, metrics)
+		proxyRegistry[db] = proxy
+	}
 	return proxy
 }
 
@@ -28,8 +39,8 @@ func Print(duration int) {
 		time.Sleep(timeDuration * time.Second)
 		for {
 			startTime := time.Now()
-			for _, proxy := range proxyRegistry {
-				proxy.printMetrics(duration)
+			for _, metrics := range metricsRegistry {
+				metrics.printMetrics(duration)
 			}
 			elapsedTime := time.Now().Sub(startTime)
 			time.Sleep(timeDuration*time.Second - elapsedTime)
