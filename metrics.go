@@ -3,6 +3,7 @@ package sql_metrics
 import (
 	"fmt"
 	metrics "github.com/sonots/go-metrics" // max,mean,min,stddev,percentile
+	"sync"
 	"time"
 )
 
@@ -17,6 +18,8 @@ func newMetrics(name string) *Metrics {
 		timers: map[string]metrics.Timer{},
 	}
 }
+
+var mutex = sync.Mutex{}
 
 //print the elapsed time on each request if Verbose flag is true
 func (proxy *Metrics) printVerbose(elapsedTime time.Duration, query string) {
@@ -54,10 +57,14 @@ func (proxy *Metrics) printMetrics(duration int) {
 func (proxy *Metrics) measure(startTime time.Time, query string) {
 	elapsedTime := time.Now().Sub(startTime)
 	if proxy.timers[query] == nil {
-		proxy.timers[query] = metrics.NewTimer()
+		mutex.Lock()
+		if proxy.timers[query] == nil {
+			proxy.timers[query] = metrics.NewTimer()
+		}
+		mutex.Unlock()
 	}
 	proxy.timers[query].Update(elapsedTime)
-	if Enable && Verbose {
+	if Verbose {
 		proxy.printVerbose(elapsedTime, query)
 	}
 }
