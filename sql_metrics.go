@@ -32,6 +32,13 @@ func WrapDB(name string, db *sql.DB) *DB {
 	return proxy
 }
 
+//Flush  print the metrics
+func Flush() {
+	for _, metrics := range metricsRegistry {
+		metrics.printMetrics(-1)
+	}
+}
+
 //Print  print the metrics in each second
 func Print(duration int) {
 	timeDuration := time.Duration(duration)
