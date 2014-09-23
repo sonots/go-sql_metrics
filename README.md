@@ -7,7 +7,7 @@ Instrument database/sql queries
 ```go
 import (
   "database/sql"
-  sql_metrics "github.com/sonots/go-sql_metrics"
+  "github.com/sonots/go-sql_metrics"
 )
 
 func main() {
@@ -37,6 +37,25 @@ Verbose Output Example (LTSV format):
 ```
 time:2014-09-13 17:35:49.717393256 +0900 JST    db:foo    query:SELECT body FROM memos WHERE id = ?   elapsed:0.000910
 ```
+
+# Others
+
+## Enable
+
+It is possible to diable instrumentation as:
+
+```
+sql_metrics.Enable = false
+```
+
+## Flush()
+
+It is possible to flush metrics on arbitrary timing by calling `Flush()` as:
+
+```
+sql_metrics.Flush()
+```
+
 
 # ToDo
 
