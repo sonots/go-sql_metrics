@@ -38,11 +38,27 @@ Verbose Output Example (LTSV format):
 time:2014-09-13 17:35:49.717393256 +0900 JST    db:foo    query:SELECT body FROM memos WHERE id = ?   elapsed:0.000910
 ```
 
-# Others
+# API
+
+## Print
+
+Print summarized metrics on each specified second:
+
+```
+sql_metrics.Print(60)
+```
+
+## Verbose
+
+Print metrics on each query:
+
+```
+sql_metrics.Verbose = true
+```
 
 ## Enable
 
-It is possible to diable instrumentation as:
+Diable instrumentation as:
 
 ```
 sql_metrics.Enable = false
@@ -50,12 +66,11 @@ sql_metrics.Enable = false
 
 ## Flush()
 
-It is possible to flush metrics on arbitrary timing by calling `Flush()` as:
+Flush metrics on arbitrary timing by calling `Flush()` as:
 
 ```
 sql_metrics.Flush()
 ```
-
 
 # ToDo
 

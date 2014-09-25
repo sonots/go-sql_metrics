@@ -8,6 +8,9 @@ import (
 // print infomation on each request
 var Verbose = false
 
+// Get summarized metrics by updating go-metrics
+var Summary = true
+
 // Set Enable = false if you want to turn off the instrumentation
 var Enable = true
 
@@ -41,6 +44,10 @@ func Flush() {
 
 //Print  print the metrics in each second
 func Print(duration int) {
+	if duration <= 0 {
+		Summary = false
+		return
+	}
 	timeDuration := time.Duration(duration)
 	go func() {
 		time.Sleep(timeDuration * time.Second)
