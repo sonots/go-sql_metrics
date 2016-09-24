@@ -3,6 +3,7 @@ package sql_metrics
 import (
 	"fmt"
 	metrics "github.com/sonots/go-metrics" // max,mean,min,stddev,percentile
+	"strings"
 	"sync"
 	"time"
 )
@@ -26,7 +27,7 @@ func (proxy *Metrics) printVerbose(elapsedTime time.Duration, query string) {
 	fmt.Printf("time:%v\tdb:%s\tquery:%s\telapsed:%f\n",
 		time.Now(),
 		proxy.name,
-		query,
+		strings.Replace(query, "\n", " ", -1),
 		elapsedTime.Seconds(),
 	)
 }
@@ -39,7 +40,7 @@ func (proxy *Metrics) printMetrics(duration int) {
 				"time:%v\tdb:%s\tquery:%s\tcount:%d\tmax:%f\tmean:%f\tmin:%f\tpercentile95:%f\tsum:%f\tduration:%d\n",
 				time.Now(),
 				proxy.name,
-				query,
+				strings.Replace(query, "\n", " ", -1),
 				timer.Count(),
 				float64(timer.Max())/float64(time.Second),
 				timer.Mean()/float64(time.Second),
